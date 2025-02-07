@@ -13,8 +13,8 @@ function Navbar() {
           <span>Fake Estate</span>
         </a>
         <a href="/">Home</a>
-        <a href="/">About</a>
-        <a href="/">Contact</a>
+        <a href="/about">About</a>
+        <a href="/list">Listing</a>
         <a href="/">Agents</a>
       </div>
       <div className="right">
