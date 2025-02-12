@@ -9,6 +9,7 @@ function ListPage() {
   const data = listData
 
   return (
+    <>
     <div className='listPage'>
       <div className='listContainer'>
         <div className='wrapper'>
@@ -22,6 +23,7 @@ function ListPage() {
         <Map items={data}/>
       </div>
     </div>
+    </>
   )
 }
 

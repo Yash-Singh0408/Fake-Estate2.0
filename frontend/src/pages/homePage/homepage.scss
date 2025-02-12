@@ -1,81 +1,104 @@
 @import "../../responsive.scss";
 
-.homepage{
-    display: flex;
-    height: 100%;
-
-
-    .textContainer{
-        flex: 3;
-
-        .wrapper{
-            padding-right: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 50px;
-            height: 100%;
-
-            @include md{
-                padding: 0;
-            }
-
-            @include sm{
-                justify-content: start;
-            }
-
-            .title{
-                font-size: 60px;
-                font-weight: bold;
-
-                @include ld{
-                    font-size: 48px;   
-                   }
-            }
-
-            .boxes{
-                display: flex;
-                justify-content: space-between;
-                gap: 20px;
-
-                @include sm{
-                    display: none;
-                }
-
-                h1{
-                    font-size: 36px;
-
-                    @include ld{
-                        font-size: 32px;   
-                       }
-                }
-
-                h2{
-                    font-size: 20px;
-                    font-weight: 300;
-                }
-            }
-        }
-    }
-    .imageContainer{
-        flex: 2;
-        background-color: #fcf5f3;
-        position: relative;
-        display: flex;
-        align-items: center;
-
-        @include md{
-            display: none;
-        }
-
-        img{
-            width: 115%;
-            position: absolute;
-            right: 0;
-
-            @include ld{
-             width: 105%;   
-            }
-        }
-    }
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.homepage {
+
+  display: flex;
+  height: 100%;
+
+  .textContainer {
+    flex: 3;
+    animation: slideInLeft 1s ease-out;
+
+    .wrapper {
+      padding-right: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 50px;
+      height: 100%;
+
+      @include md {
+        padding: 0;
+      }
+
+      @include sm {
+        justify-content: start;
+      }
+
+      .title, .searchBar {
+        animation: slideInLeft 1.2s ease-out;
+      }
+
+      .boxes {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+
+        @include sm {
+          display: none;
+        }
+
+        h1 {
+          font-size: 36px;
+
+          @include ld {
+            font-size: 32px;
+          }
+        }
+
+        h2 {
+          font-size: 20px;
+          font-weight: 300;
+        }
+      }
+    }
+  }
+
+  .imageContainer {
+    flex: 2;
+    background-color: #fcf5f3;
+    position: relative;
+    display: flex;
+    align-items: center;
+    animation: slideInRight 1s ease-out;
+
+    @include md {
+      display: none;
+    }
+
+    img {
+      width: 115%;
+      position: absolute;
+      right: 0;
+
+      @include ld {
+        width: 105%;
+      }
+    }
+  }
+  
+}
+
+

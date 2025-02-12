@@ -3,6 +3,7 @@ import SearchBar from "../../components/searchBar/SearchBar.jsx";
 
 function Homepage() {
   return (
+    <>
     <div className="homepage">
       <div className="textContainer">
         <div className="wrapper">
@@ -29,6 +30,8 @@ function Homepage() {
         <img src="/bg.png" alt="" />
       </div>
     </div>
+   
+    </>
   );
 }
 
