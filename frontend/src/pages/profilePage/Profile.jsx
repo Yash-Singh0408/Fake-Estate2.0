@@ -2,8 +2,25 @@ import React from "react";
 import "./profile.scss";
 import List from "../../components/list/List";
 import Chat from "../../components/chat/Chat";
+import { Link , useNavigate} from "react-router-dom";
+import apiRequest from "../../lib/apiRequest";
 
 function Profile() {
+
+  const navigate = useNavigate();
+
+  const hadleLogout = async () => {
+
+    try {
+      // APi req to logout
+      const res =  apiRequest.post('/auth/logout');
+      localStorage.removeItem("user");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="profilePage">
       <div className="details">
@@ -18,6 +35,7 @@ function Profile() {
             </span>
             <span>User : <b>Yash Singh</b></span>
             <span>Email : 0sKdD@example.com</span>
+            <button onClick={hadleLogout}>Logout</button>
           </div>
           <div className="title">
             <h1>My Listing</h1>
