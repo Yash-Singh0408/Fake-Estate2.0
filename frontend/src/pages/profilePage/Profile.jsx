@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import "./profile.scss";
 import List from "../../components/list/List";
 import Chat from "../../components/chat/Chat";
-import { Link , useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../lib/apiRequest";
+import { AuthContext } from "../../context/AuthContext";
 
 function Profile() {
-
   const navigate = useNavigate();
 
+  const { currentUser, updateUser } = useContext(AuthContext);
   const hadleLogout = async () => {
-
     try {
       // APi req to logout
-      const res =  apiRequest.post('/auth/logout');
-      localStorage.removeItem("user");
+      await apiRequest.post("/auth/logout");
+      updateUser(null);
       navigate("/");
     } catch (error) {
       console.log(error);
@@ -30,11 +30,14 @@ function Profile() {
             <button>Update Profile</button>
           </div>
           <div className="info">
-            <span>Avatar :
-            <img src="https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="" />
+            <span>
+              Avatar :
+              <img src={currentUser.avatar || "/noavatar.jpg"} alt="" />
             </span>
-            <span>User : <b>Yash Singh</b></span>
-            <span>Email : 0sKdD@example.com</span>
+            <span>
+              User : <b>{currentUser.username}</b>
+            </span>
+            <span>Email : {currentUser.email}</span>
             <button onClick={hadleLogout}>Logout</button>
           </div>
           <div className="title">
@@ -50,7 +53,7 @@ function Profile() {
       </div>
       <div className="chatContainer">
         <div className="wrapper">
-          <Chat/>
+          <Chat />
         </div>
       </div>
     </div>
