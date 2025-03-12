@@ -4,6 +4,9 @@ import Navbar from "../../components/navbar/Navbar";
 import "./layout.scss";
 import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify"; 
 
 function Layout() {
   return (
@@ -23,6 +26,12 @@ function Layout() {
 
 function RequireAuth() {
   const { currentUser } = useContext(AuthContext);
+
+  
+  // if (!currentUser) {
+  //   toast.warning("You need to log in to access this page! ⚠️");
+  //   return <Navigate to="/login" />;
+  // }
 
   return !currentUser ? (
     <Navigate to="/login" />

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import "./profile.scss";
 import List from "../../components/list/List";
 import Chat from "../../components/chat/Chat";
@@ -44,7 +44,9 @@ function Profile() {
           </div>
           <div className="title">
             <h1>My Listing</h1>
-            <button>Create New Post</button>
+            <Link to="/profile/addpost">
+              <button>Create New Post</button>
+            </Link>
           </div>
           <List />
           <div className="title">

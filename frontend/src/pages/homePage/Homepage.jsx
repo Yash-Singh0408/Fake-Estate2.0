@@ -15,8 +15,9 @@ function Homepage() {
       <div className="textContainer">
         <div className="wrapper">
           <h1 className="title">Buy Sell and Rent Your Dream Properties</h1>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-          <SearchBar/>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit dolor sit 
+          amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
+          <SearchBar />
           <div className="boxes">
             <div className="box">
               <h1>16+</h1>
