@@ -1,14 +1,38 @@
 import "./singlePage.scss";
 import Slider from "../../components/slider/Slider";
-import { singlePostData, userData } from "../../lib/dummyData";
 import Map from "../../components/map/Map";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import Dompurify from "dompurify";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import apiRequest from "../../lib/apiRequest";
 
 function SinglePage() {
-
   const post = useLoaderData();
   console.log(post);
+
+  const [saved, setSaved] = useState(post.isSaved);
+  const [loading, setLoading] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleSave = async () => {
+    if (!currentUser) {
+      navigate("/login");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await apiRequest.post("/users/save", { postId: post.id });
+      setSaved(res.data.isSaved); // Update state with API response
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="singlePage">
@@ -30,9 +54,12 @@ function SinglePage() {
                 <span className="username">{post.user.username}</span>
               </div>
             </div>
-            <div className="bottom" dangerouslySetInnerHTML={{
-              __html: Dompurify.sanitize(post.postDetail.desc),
-            }}></div>
+            <div
+              className="bottom"
+              dangerouslySetInnerHTML={{
+                __html: Dompurify.sanitize(post.postDetail.desc),
+              }}
+            ></div>
           </div>
         </div>
       </div>
@@ -40,16 +67,29 @@ function SinglePage() {
         <div className="wrapper">
           <p className="title">Location</p>
           <div className="mapContainer">
-            <Map items={[post] } />
+            <Map items={[post]} />
           </div>
           <div className="buttons">
             <button>
               <img src="/chat.png" alt="" />
               Send a message
             </button>
-            <button>
-              <img src="/save.png" alt="" />
-              Save the Place
+            <button
+              onClick={handleSave}
+              style={{
+                backgroundColor: saved ? "#fece51" : "white",
+                minWidth: "160px", 
+              }}
+              disabled={loading} 
+            >
+              {loading ? (
+                "Saving..."
+              ) : (
+                <>
+                  <img src="/save.png" alt="save" />
+                  {saved ? "Place Saved" : "Save the Place"}
+                </>
+              )}
             </button>
           </div>
 
@@ -59,26 +99,22 @@ function SinglePage() {
               <img src="/utility.png" alt="" />
               <div className="featureText">
                 <span>Utility</span>
-                {
-                  post.postDetail.utilities === "owner" ? (
-                    <p>Owner is responsible</p>
-                  ) : (
-                    <p>Tenant is responsible</p>
-                  )
-                }
+                {post.postDetail.utilities === "owner" ? (
+                  <p>Owner is responsible</p>
+                ) : (
+                  <p>Tenant is responsible</p>
+                )}
               </div>
             </div>
             <div className="feature">
               <img src="/pet.png" alt="" />
               <div className="featureText">
                 <span>Pet Policy</span>
-                {
-                  post.postDetail.pets === "allowed" ? (
-                    <p>Pets are allowed</p>
-                  ) : (
-                    <p>Pets are not allowed</p>
-                  )
-                }
+                {post.postDetail.pets === "allowed" ? (
+                  <p>Pets are allowed</p>
+                ) : (
+                  <p>Pets are not allowed</p>
+                )}
               </div>
             </div>{" "}
             <div className="feature">
@@ -112,21 +148,36 @@ function SinglePage() {
               <img src="/school.png" alt="" />
               <div className="featureText">
                 <span> School</span>
-                <p>{post.postDetail.school > 999 ? post.postDetail.school/1000 + "km" : post.postDetail.school }m away</p>
+                <p>
+                  {post.postDetail.school > 999
+                    ? post.postDetail.school / 1000 + "km"
+                    : post.postDetail.school}
+                  m away
+                </p>
               </div>
             </div>
             <div className="feature">
               <img src="/bus.png" alt="" />
               <div className="featureText">
                 <span>Bus </span>
-                <p>{post.postDetail.bus > 999 ? post.postDetail.bus/1000 + "km" : post.postDetail.bus }m away</p>
+                <p>
+                  {post.postDetail.bus > 999
+                    ? post.postDetail.bus / 1000 + "km"
+                    : post.postDetail.bus}
+                  m away
+                </p>
               </div>
             </div>
             <div className="feature">
               <img src="/restaurant.png" alt="" />
               <div className="featureText">
                 <span>Hotel</span>
-                <p>{post.postDetail.restaurant > 999 ? post.postDetail.restaurant/1000 + "km" : post.postDetail.restaurant }m away</p>
+                <p>
+                  {post.postDetail.restaurant > 999
+                    ? post.postDetail.restaurant / 1000 + "km"
+                    : post.postDetail.restaurant}
+                  m away
+                </p>
               </div>
             </div>
           </div>
