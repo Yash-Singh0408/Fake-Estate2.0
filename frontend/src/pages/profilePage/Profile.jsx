@@ -7,11 +7,12 @@ import apiRequest from "../../lib/apiRequest";
 import { AuthContext } from "../../context/AuthContext";
 
 function Profile() {
+
   const data = useLoaderData();
-  console.log(data);
+
+  // console.log(data);
 
   const navigate = useNavigate();
-
   const { currentUser, updateUser } = useContext(AuthContext);
   const hadleLogout = async () => {
     try {
@@ -76,7 +77,14 @@ function Profile() {
       </div>
       <div className="chatContainer">
         <div className="wrapper">
-          <Chat />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Await
+              resolve={data.chatResponse}
+              errorElement={<p>Error loading chats!</p>}
+            >
+              {(chatResponse) => <Chat chats={chatResponse.data} />}
+            </Await>
+          </Suspense>
         </div>
       </div>
     </div>
