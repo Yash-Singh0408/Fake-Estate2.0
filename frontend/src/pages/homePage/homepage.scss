@@ -1,104 +1,283 @@
 @import "../../responsive.scss";
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 .homepage {
+  width: 100%;
+  height: 100vh;
+  position: relative;
 
-  display: flex;
-  height: 100%;
+  .hero {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: url("/hero.png") center center/cover no-repeat;
+    border-radius: 0px 0px 30px none;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
 
-  .textContainer {
-    flex: 3;
-    animation: slideInLeft 1s ease-out;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
 
-    .wrapper {
-      padding-right: 100px;
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      width: 100%;
+      color: #fff;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 50px;
-      height: 100%;
+      gap: 30px;
 
-      @include md {
-        padding: 0;
+      h1 {
+        font-size: 48px;
+
+        @include md {
+          font-size: 32px;
+        }
+
+        @include sm {
+          font-size: 24px;
+        }
       }
+    }
+
+    .mainHeading {
+      background-color: #aaa2a2a3;
+      width: fit-content;
+      border-radius: 24px;
+      padding: 6px 20px;
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: black;
+
+      animation: slideInLeft 1s ease forwards;
+      opacity: 0;
+      animation-delay: 0.2s;
+
+      .bold {
+        font-weight: 700;
+        color: black;
+      }
+
+      .light {
+        font-weight: 500;
+        color: #555;
+      }
+
+      .arrowBtn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 30px;
+        background-color: #ffa500;
+        padding: 12px;
+        border-radius: 50%;
+        height: 48px;
+        width: 48px;
+        cursor: pointer;
+        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 0 0 transparent;
+      
+        &:hover {
+          transform: scale(1.1);
+          background-color: #ff8c00;
+          box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+        }
+      
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+        }
+      
+        .arrow {
+          color: white;
+          font-size: 34px;
+          transform: rotate(-45deg);
+          transition: transform 0.3s ease;
+      
+          @include md {
+            font-size: 16px;
+          }
+        }
+      
+        &:hover .arrow {
+          transform: rotate(-45deg) translateX(4px);
+        }
+      
+        @include md {
+          height: 32px;
+          width: 32px;
+          margin-left: 20px;
+        }
+      
+        @include sm {
+          height: 24px;
+          width: 24px;
+          margin-left: 10px;
+        }
+      
+        &:active {
+          transform: scale(0.95); // tap effect
+        }
+      }
+           
 
       @include sm {
-        justify-content: start;
+        font-size: 32px;
       }
+    }
 
-      .title, .searchBar {
-        animation: slideInLeft 1.2s ease-out;
-      }
+    .searchBarWrapper {
+      width: 100%;
+      animation: slideInRight 1s ease forwards;
+      opacity: 0;
+      animation-delay: 0.4s;
+    }
 
-      .boxes {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
+    .propertyHighlight {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px;
+      position: relative; // ⬅️ Make this relative so .textBox absolute positioning works
+
+      .imageWrapper {
+        width: 300px;
+        height: 200px;
+        border-radius: 12px;
+        background-color: white;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 
         @include sm {
           display: none;
         }
 
-        h1 {
-          font-size: 36px;
+        img {
+          padding: 8px;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+      }
 
-          @include ld {
-            font-size: 32px;
+      .textBox {
+        position: absolute;
+        bottom: -75px;
+        left: 150px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 500px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+        h3 {
+          color: #000;
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+
+        p {
+          font-size: 14px;
+          line-height: 1.6;
+          color: #555;
+        }
+      }
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+
+        .imageWrapper {
+          width: 100%;
+          height: auto;
+        }
+
+        .textBox {
+          position: static; // ⬅️ Remove absolute positioning
+          max-width: 100%;
+          height: 400px;
+          margin-top: 75px;
+        }
+      }
+    }
+
+    .stats {
+      position: absolute;
+      bottom: -64px;
+      right: -130px;
+      background: #ffffff;
+      border-radius: 16px 0px 0px 0px;
+      padding: 60px 32px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      display: flex;
+      gap: 40px;
+      z-index: 3;
+      opacity: 0;
+
+      @include md {
+        padding: 40px 20px;
+        gap: 20px;
+        right: -100px;
+      }
+
+      @include sm {
+        opacity: 1;
+        display: none;
+      }
+
+      .statBox {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 100px;
+
+        h2 {
+          font-size: 36px;
+          font-weight: 700;
+          color: #000;
+          margin: 0;
+
+          @include md {
+            font-size: 24px;
           }
         }
 
-        h2 {
+        p {
           font-size: 20px;
-          font-weight: 300;
+          color: #444;
+          margin: 0;
+          text-align: center;
         }
       }
-    }
-  }
 
-  .imageContainer {
-    flex: 2;
-    background-color: #fcf5f3;
-    position: relative;
-    display: flex;
-    align-items: center;
-    animation: slideInRight 1s ease-out;
-
-    @include md {
-      display: none;
-    }
-
-    img {
-      width: 115%;
-      position: absolute;
-      right: 0;
-
-      @include ld {
-        width: 105%;
+      @include sm {
+        flex-direction: column;
+        bottom: 20px;
+        right: 20px;
+        padding: 16px;
+        gap: 20px;
       }
     }
   }
-  
 }
-
-

@@ -6,7 +6,9 @@ nav {
   justify-content: space-between;
   align-items: center;
 
-  a {
+  a, .link {
+    text-decoration: none;
+    color: inherit;
     transition: all 0.4s ease;
 
     @include sm {
@@ -46,6 +48,7 @@ nav {
       }
     }
   }
+
   .right {
     flex: 2;
     display: flex;
@@ -58,17 +61,17 @@ nav {
       background-color: transparent;
     }
 
-    a {
+    a, .link {
       padding: 12px 24px;
       margin: 20px;
     }
 
-    .user{
+    .user {
       display: flex;
       align-items: center;
       font-weight: bold;
 
-      img{
+      img {
         width: 40px;
         height: 40px;
         border-radius: 50%;
@@ -76,20 +79,20 @@ nav {
         margin-right: 20px;
       }
 
-      span{
-        @include sm{
+      span {
+        @include sm {
           display: none;
         }
       }
 
-      .profile{
+      .profile {
         padding: 12px 24px;
         background-color: #fece51;
         cursor: pointer;
         border: none;
         position: relative;
-        
-        .notification{
+
+        .notification {
           position: absolute;
           top: -8px;
           right: -8px;
@@ -102,7 +105,6 @@ nav {
           align-items: center;
           justify-content: center;
         }
-
       }
     }
 
@@ -140,15 +142,16 @@ nav {
       align-items: center;
       justify-content: center;
       font-size: 24px;
+      z-index: 998;
 
       &.active {
         right: 0;
       }
 
-      @include sm {
-        a {
-          display: initial;
-        }
+      a, .link {
+        display: initial;
+        color: white;
+        margin: 20px 0;
       }
     }
   }

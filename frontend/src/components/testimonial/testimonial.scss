@@ -1,0 +1,79 @@
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.testimonial-slider {
+  margin-top: 10px;
+  padding: 4rem 2rem;
+  background: #f7f7f7;
+  text-align: center;
+
+  .slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .viewport {
+    overflow: hidden;
+    width: 965px; // 3 cards
+  }
+
+  .slider-track {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .testimonial-card {
+    flex-shrink: 0;
+    width: 320px;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    text-align: center;
+
+    img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+    }
+
+    .quote {
+      font-style: italic;
+      color: #444;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    span {
+      font-size: 0.85rem;
+      color: #888;
+    }
+  }
+
+  .nav-btn {
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
