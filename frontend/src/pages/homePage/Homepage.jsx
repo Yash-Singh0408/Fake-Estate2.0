@@ -36,20 +36,30 @@ function Homepage() {
 
   // Effects for scroll in/out
   useEffect(() => {
-    headingControls.start(mainHeadingInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 });
+    headingControls.start(
+      mainHeadingInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }
+    );
   }, [mainHeadingInView]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    searchControls.start(searchInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 });
+    searchControls.start(
+      searchInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }
+    );
   }, [searchInView]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    propertyImageControls.start(propertyInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 });
-    propertyTextControls.start(propertyInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 });
+    propertyImageControls.start(
+      propertyInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }
+    );
+    propertyTextControls.start(
+      propertyInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }
+    );
   }, [propertyInView]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    statsControls.start(statsInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 });
+    statsControls.start(
+      statsInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }
+    );
   }, [statsInView]); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   return (
@@ -67,7 +77,9 @@ function Homepage() {
             <span className="light">your dream</span>{" "}
             <span className="bold">Project</span>
             <span className="arrowBtn">
-              <Link to="/list"><FontAwesomeIcon className="arrow" icon={faArrowRight} /> </Link>
+              <Link to="/list">
+                <FontAwesomeIcon className="arrow" icon={faArrowRight} />{" "}
+              </Link>
             </span>
           </motion.h1>
 
@@ -137,7 +149,10 @@ function Homepage() {
       </div>
 
       <OurProperties />
-      <AboutSection />
+      <div id="aboutSection">
+        <AboutSection />
+      </div>
+
       <TestimonialSlider />
       <HomeSearch />
       <Footer />

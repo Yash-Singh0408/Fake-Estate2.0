@@ -1,10 +1,15 @@
 
 import apiRequest from "./apiRequest";
 
+// Utility function to simulate delay
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 // Single Page Data Loader
-export const singlePageLoader = async ({ request, params }) => {
-  const res = await apiRequest("/posts/getPost/" + params.id);
-  return res.data;
+export const singlePageLoader = async ({ params }) => {
+  const promise = apiRequest.get(`/posts/getPost/${params.id}`).then(res => res.data);
+  return {
+    post: promise,
+  };
 };
 
 // List Page Data Loader

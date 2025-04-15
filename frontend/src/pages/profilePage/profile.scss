@@ -10,7 +10,7 @@
 
   .details {
     flex: 3;
-    overflow: scroll;
+    overflow: auto;
     padding-bottom: 50px;
 
     @include md {

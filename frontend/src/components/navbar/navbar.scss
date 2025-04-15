@@ -10,6 +10,7 @@ nav {
     text-decoration: none;
     color: inherit;
     transition: all 0.4s ease;
+    cursor: pointer;
 
     @include sm {
       display: none;
@@ -54,7 +55,7 @@ nav {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    background-color: #fcf5f3;
+    background-color: #fcf5f33f;
     height: 100%;
 
     @include md {
@@ -64,6 +65,15 @@ nav {
     a, .link {
       padding: 12px 24px;
       margin: 20px;
+
+      @include md {
+        display: inline;
+      }
+
+      @include sm {
+        display: none;
+      }
+
     }
 
     .user {

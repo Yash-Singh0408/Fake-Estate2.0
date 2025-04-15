@@ -8,7 +8,15 @@ import Register from "./pages/registerPage/Register.jsx";
 import Login from "./pages/loginPage/Login.jsx";
 import ProfileUpdatePage from "./pages/profileUpdatePage/ProfileUpdatePage.jsx";
 import NewPostPage from "./pages/newPostPage/NewPost.jsx";
-import { listPageLoader, profilePageLoader, singlePageLoader } from "./lib/loaders.js";
+import {
+  listPageLoader,
+  profilePageLoader,
+  singlePageLoader,
+} from "./lib/loaders.js";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AnimatePresence } from "framer-motion";
+import AuthPageWrapper from "./components/animatedRoutes/AnimatedRoutes.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,22 +34,38 @@ function App() {
           loader: listPageLoader,
         },
         {
-          path: "/:id",
+          path: "/list/:id",
           element: <SinglePage />,
           loader: singlePageLoader,
         },
         {
-          path: "/about",
+          path: "/about-us",
           element: <div>About</div>,
         },
-
+        {
+          path: "/contact",
+          element: <div>Contact</div>,
+        },
         {
           path: "/login",
-          element: <Login />,
+          element: (
+            <AuthPageWrapper>
+              <Login />
+            </AuthPageWrapper>
+          ),
         },
         {
           path: "/register",
-          element: <Register />,
+          element: (
+            <AuthPageWrapper>
+              <Register />
+            </AuthPageWrapper>
+          ),
+        },
+        //  404 page
+        {
+          path: "*",
+          element: <div>404</div>,
         },
       ],
     },
@@ -59,14 +83,29 @@ function App() {
           element: <ProfileUpdatePage />,
         },
         {
-          path:"/profile/addpost",
-          element: <NewPostPage/>,
-        }
+          path: "/profile/addpost",
+          element: <NewPostPage />,
+        },
       ],
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AnimatePresence mode="wait">
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggabl
+        pauseOnHover={false}
+      />
+    </AnimatePresence>
+  );
 }
 
 export default App;

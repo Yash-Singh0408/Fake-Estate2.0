@@ -5,6 +5,9 @@ import Chat from "../../components/chat/Chat";
 import { Await, Link, useLoaderData, useNavigate } from "react-router-dom";
 import apiRequest from "../../lib/apiRequest";
 import { AuthContext } from "../../context/AuthContext";
+import MessageSkeleton from "../../components/skeleton/MessageSkeleton";
+import SkeletonCard from "../../components/skeleton/SkeletonCard";
+import { toast } from "react-toastify";
 
 function Profile() {
 
@@ -20,6 +23,7 @@ function Profile() {
       await apiRequest.post("/auth/logout");
       updateUser(null);
       navigate("/");
+      toast.success("Logged out successfully!");
     } catch (error) {
       console.log(error);
     }
@@ -53,7 +57,7 @@ function Profile() {
             </Link>
           </div>
 
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<SkeletonCard />}>
             <Await
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
@@ -65,7 +69,7 @@ function Profile() {
           <div className="title">
             <h1>Saved List</h1>
           </div>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<SkeletonCard />}>
             <Await
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
@@ -77,7 +81,7 @@ function Profile() {
       </div>
       <div className="chatContainer">
         <div className="wrapper">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<MessageSkeleton />}>
             <Await
               resolve={data.chatResponse}
               errorElement={<p>Error loading chats!</p>}

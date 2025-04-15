@@ -1,52 +1,77 @@
 import React, { useState } from "react";
 import "./filter.scss";
 import { useSearchParams } from "react-router-dom";
+import { FaSearch, FaRedo } from "react-icons/fa";
+
 
 function Filter() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false);
   const [query, setQuery] = useState({
     type: searchParams.get("type") || "",
     city: searchParams.get("city") || "",
     property: searchParams.get("property") || "",
-    bedroom: searchParams.get("bedroom") || 1,
+    bedroom: searchParams.get("bedroom") || 0,
     minPrice: searchParams.get("minPrice") || 0,
     maxPrice: searchParams.get("maxPrice") || 10000000,
   });
 
   const handleChange = (e) => {
-    setQuery({
-      ...query,
-      [e.target.name]: e.target.value,
-    });
+    setQuery({ ...query, [e.target.name]: e.target.value });
   };
 
-  const hanleFilter = () => {
+  const handleFilter = () => {
     setSearchParams(query);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleFilter();
+    }
+  };
+
+  const resetFilters = () => {
+    const defaultQuery = {
+      type: "",
+      city: "",
+      property: "",
+      bedroom: "",
+      minPrice: "",
+      maxPrice: "",
+    };
+    setQuery(defaultQuery);
+    setSearchParams({});
+  };
   return (
     <div className="filter">
       <h1>
-        Seach Result for <b>{searchParams.get("city")}</b>
+        Search Results for <b>{searchParams.get("city")}</b>
       </h1>
+
+      <button className="toggleBtn" onClick={() => setShowFilters(!showFilters)}>
+        {showFilters ? "Hide Filters" : "Show Filters"}
+      </button>
+
       <div className="top">
-        <div className="item">
+        <div className="item" style={{ width: "100%" }}>
           <label htmlFor="city">Location</label>
           <input
             type="text"
             id="city"
             name="city"
             placeholder="City Location"
+            value={query.city}
             onChange={handleChange}
-            defaultValue={query.city}
+            onKeyDown={handleKeyDown}
+            style={{ width: "100%" }}
           />
         </div>
       </div>
-      <div className="bottom">
+
+      <div className={`bottom ${showFilters ? "show" : ""}`}>
         <div className="item">
-          <label htmlFor="city">Type</label>
-          <select name="type" id="type" onChange={handleChange}
-          defaultValue={query.type}>
+          <label htmlFor="type">Type</label>
+          <select name="type" id="type" value={query.type} onChange={handleChange}>
             <option value="">Any</option>
             <option value="buy">Buy</option>
             <option value="rent">Rent</option>
@@ -55,7 +80,7 @@ function Filter() {
 
         <div className="item">
           <label htmlFor="property">Property</label>
-          <select name="property" id="property" onChange={handleChange} defaultValue={query.property}>
+          <select name="property" id="property" value={query.property} onChange={handleChange}>
             <option value="">Any</option>
             <option value="house">House</option>
             <option value="apartment">Apartment</option>
@@ -68,13 +93,11 @@ function Filter() {
           <label htmlFor="minPrice">Min Price</label>
           <input
             type="number"
-            min={0}
-            max={1000000}
             id="minPrice"
             name="minPrice"
-            placeholder="any"
+            value={query.minPrice}
             onChange={handleChange}
-            defaultValue={query.minPrice}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
@@ -82,31 +105,34 @@ function Filter() {
           <label htmlFor="maxPrice">Max Price</label>
           <input
             type="number"
-            min={0}
-            max={1000000}
             id="maxPrice"
             name="maxPrice"
-            placeholder="any"
+            value={query.maxPrice}
             onChange={handleChange}
-            defaultValue={query.maxPrice}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
         <div className="item">
           <label htmlFor="bedroom">Bedroom</label>
           <input
-            type="text"
+            type="number"
             id="bedroom"
             name="bedroom"
-            placeholder="any"
+            value={query.bedroom}
             onChange={handleChange}
-            defaultValue={query.bedroom}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
-        <button onClick={hanleFilter}>
-          <img src="/search.png" alt="search" />
-        </button>
+        <div className="actions">
+          <button className="search" onClick={handleFilter}>
+          <FaSearch /> Search
+          </button>
+          <button className="reset" onClick={resetFilters}>
+          <FaRedo /> Reset
+          </button>
+        </div>
       </div>
     </div>
   );

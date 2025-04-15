@@ -3,8 +3,22 @@ import "./navbar.scss";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useNotificationStore } from "../../lib/notificationStore";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as ScrollLink, scroller } from "react-scroll";
+import { useEffect } from "react";
 
 function Navbar() {
+  const location = useLocation();
+  useEffect(() => {
+    if (location.hash === "#aboutSection") {
+      scroller.scrollTo("aboutSection", {
+        smooth: true,
+        duration: 500,
+        offset: -70,
+      });
+    }
+  }, [location]);
+
   const [open, setOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const fetch = useNotificationStore((state) => state.fetch);
@@ -20,7 +34,22 @@ function Navbar() {
           <span>FakeEstate</span>
         </Link>
         <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
+        {location.pathname === "/" ? (
+          <ScrollLink
+            to="aboutSection"
+            smooth={true}
+            duration={500}
+            offset={-70}
+            className="link"
+          >
+            About
+          </ScrollLink>
+        ) : (
+          <RouterLink to={{ pathname: "/", hash: "#aboutSection" }}>
+            About
+          </RouterLink>
+        )}
+
         <Link to="/contact">Contact</Link>
         <Link to="/agents">Agents</Link>
       </div>
@@ -50,7 +79,21 @@ function Navbar() {
 
         <div className={open ? "menu active" : "menu"}>
           <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
+          {location.pathname === "/" ? (
+          <ScrollLink
+            to="aboutSection"
+            smooth={true}
+            duration={500}
+            offset={-70}
+            className="link"
+          >
+            About
+          </ScrollLink>
+        ) : (
+          <RouterLink to={{ pathname: "/", hash: "#aboutSection" }}>
+            About
+          </RouterLink>
+        )}
           <Link to="/contact">Contact</Link>
           <Link to="/agents">Agents</Link>
           {currentUser ? (

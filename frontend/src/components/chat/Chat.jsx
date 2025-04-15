@@ -8,6 +8,8 @@ import { useNotificationStore } from "../../lib/notificationStore";
 
 function Chat({ chats }) {
   const [chat, setChat] = useState(null);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
 
@@ -16,11 +18,17 @@ function Chat({ chats }) {
   const decrease = useNotificationStore((state) => state.decrease);
 
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const scrollToBottom = () => {
+      setTimeout(() => {
+        messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    };
+    scrollToBottom();
   }, [chat]);
 
   const handleOpenChat = async (id, receiver) => {
-    try {  
+    try {
+      setLoading(true);
       const res = await apiRequest("/chats/" + id);
       if (!res.data.seenBy.includes(currentUser.id)) {
         decrease();
@@ -28,20 +36,19 @@ function Chat({ chats }) {
       setChat({ ...res.data, receiver });
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
-  };   
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!text.trim()) return;
 
-    const formData = new FormData(e.target);
-    const text = formData.get("text");
-
-    if (!text) return;
     try {
       const res = await apiRequest.post("/messages/" + chat.id, { text });
       setChat((prev) => ({ ...prev, messages: [...prev.messages, res.data] }));
-      e.target.reset();
+      setText("");
       socket.emit("sendMessage", {
         receiverId: chat.receiver.id,
         data: res.data,
@@ -95,42 +102,54 @@ function Chat({ chats }) {
           </div>
         ))}
       </div>
-      {chat && (
+
+      {loading ? (
         <div className="chatBox">
-          <div className="top">
-            <div className="user">
-              <img src={chat.receiver.avatar || "noavatar.jpg"} alt="" />
-              {chat.receiver.username}
-            </div>
-            <span className="close" onClick={() => setChat(null)}>
-              X
-            </span>
-          </div>
           <div className="center">
-            {chat.messages.map((message) => (
-              <div
-                className="chatMessage"
-                style={{
-                  alignSelf:
-                    message.userId === currentUser.id
-                      ? "flex-end"
-                      : "flex-start",
-                  textAlign:
-                    message.userId === currentUser.id ? "right" : "left",  
-                }}
-                key={message.id}
-              >
-                <p>{message.text}</p>
-                <span>{format(message.createdAt)}</span>
-              </div>
-            ))}
-            <div ref={messageEndRef}></div>
+            {Array(5)
+              .fill(0)
+              .map((_, i) => (
+                <div className="chatSkeleton" key={i}></div>
+              ))}
           </div>
-          <form onSubmit={handleSubmit} className="bottom">
-            <textarea name="text"></textarea>
-            <button>Send</button>
-          </form>
         </div>
+      ) : (
+        chat && (
+          <div className="chatBox">
+            <div className="top">
+              <div className="user">
+                <img src={chat.receiver.avatar || "/noavatar.jpg"} alt="" />
+                {chat.receiver.username}
+              </div>
+              <span className="close" onClick={() => setChat(null)}>
+                X
+              </span>
+            </div>
+            <div className="center">
+              {chat.messages.map((message) => (
+                <div
+                  className={`chatMessage ${
+                    message.userId === currentUser.id ? "own" : ""
+                  }`}
+                  key={message.id}
+                >
+                  <p>{message.text}</p>
+                  <span>{format(message.createdAt)}</span>
+                </div>
+              ))}
+              <div ref={messageEndRef}></div>
+            </div>
+            <form onSubmit={handleSubmit} className="bottom">
+              <textarea
+                name="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Type your message..."
+              ></textarea>
+              <button disabled={!text.trim()}>Send</button>
+            </form>
+          </div>
+        )
       )}
     </div>
   );
