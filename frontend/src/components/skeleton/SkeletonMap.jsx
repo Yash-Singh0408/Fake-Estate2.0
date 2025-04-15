@@ -1,4 +1,4 @@
-import './SkeletonMap.scss';
+import './skeletonMap.scss';
 
 function SkeletonMap() {
   return (
