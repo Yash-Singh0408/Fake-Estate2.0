@@ -2,7 +2,10 @@ import { Server } from "socket.io";
 
 const io = new Server({
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://fake-estate2-0-front-end-k3yf.vercel.app",
+    ],
   },
 });
 
@@ -26,7 +29,7 @@ const getUser = (userId) => {
 io.on("connection", (socket) => {
   socket.on("newUser", (userId) => {
     addUser(userId, socket.id);
-    console.log(onlineUser)
+    console.log(onlineUser);
   });
 
   socket.on("sendMessage", ({ receiverId, data }) => {
