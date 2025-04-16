@@ -18,6 +18,22 @@ import "react-toastify/dist/ReactToastify.css";
 import { AnimatePresence } from "framer-motion";
 import AuthPageWrapper from "./components/animatedRoutes/AnimatedRoutes.jsx";
 
+import "leaflet/dist/leaflet.css";
+
+import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+
 function App() {
   const router = createBrowserRouter([
     {
