@@ -1,8 +1,12 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.PROD
+  ? "https://fakeestate2-0-backend.onrender.com/api"
+  : "http://localhost:8000/api";
+
 const apiRequest = axios.create({
-    baseURL: "http://localhost:8000/api" || "https://fakeestate2-0-backend.onrender.com/api",
-   withCredentials: true
+  baseURL,
+  withCredentials: true,
 });
 
 export default apiRequest;
