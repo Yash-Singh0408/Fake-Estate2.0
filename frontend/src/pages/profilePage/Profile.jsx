@@ -8,9 +8,9 @@ import { AuthContext } from "../../context/AuthContext";
 import MessageSkeleton from "../../components/skeleton/MessageSkeleton";
 import SkeletonCard from "../../components/skeleton/SkeletonCard";
 import { toast } from "react-toastify";
+import { FaRegFolderOpen, FaRegBookmark, FaRegComments } from "react-icons/fa";
 
 function Profile() {
-
   const data = useLoaderData();
 
   // console.log(data);
@@ -62,7 +62,20 @@ function Profile() {
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
             >
-              {(postResponse) => <List posts={postResponse.data.userPosts} />}
+              {(postResponse) =>
+                postResponse.data.userPosts.length > 0 ? (
+                  <List posts={postResponse.data.userPosts} />
+                ) : (
+                  <div className="emptyState">
+                    <FaRegFolderOpen
+                      size={60}
+                      color="#ccc"
+                      style={{ marginBottom: "1rem" }}
+                    />
+                    <p>You haven&apos;t created any posts yet.</p>
+                  </div>
+                )
+              }
             </Await>
           </Suspense>
 
@@ -74,21 +87,48 @@ function Profile() {
               resolve={data.postResponse}
               errorElement={<p>Error loading posts!</p>}
             >
-              {(postResponse) => <List posts={postResponse.data.savedPost} />}
+              {(postResponse) =>
+                postResponse.data.savedPost.length > 0 ? (
+                  <List posts={postResponse.data.savedPost} />
+                ) : (
+                  <div className="emptyState">
+                    <FaRegBookmark
+                      size={60}
+                      color="#ccc"
+                      style={{ marginBottom: "1rem" }}
+                    />
+                    <p>No saved posts yet. Start exploring!</p>
+                  </div>
+                )
+              }
             </Await>
           </Suspense>
         </div>
       </div>
       <div className="chatContainer">
         <div className="wrapper">
-          <Suspense fallback={<MessageSkeleton />}>
-            <Await
-              resolve={data.chatResponse}
-              errorElement={<p>Error loading chats!</p>}
-            >
-              {(chatResponse) => <Chat chats={chatResponse.data} />}
-            </Await>
-          </Suspense>
+          <div className="section">
+            <div className="title">
+              <h1>Messages</h1>
+            </div>
+            <Suspense fallback={<MessageSkeleton />}>
+              <Await
+                resolve={data.chatResponse}
+                errorElement={<p>Error loading chats!</p>}
+              >
+                {(chatResponse) =>
+                  chatResponse.data.length > 0 ? (
+                    <Chat chats={chatResponse.data} />
+                  ) : (
+                    <div className="emptyState">
+                      <FaRegComments size={60} color="#ccc" />
+                      <p>No chats yet. Start a conversation!</p>
+                    </div>
+                  )
+                }
+              </Await>
+            </Suspense>
+          </div>
         </div>
       </div>
     </div>

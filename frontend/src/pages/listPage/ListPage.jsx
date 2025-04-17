@@ -12,6 +12,8 @@ import { faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 function ListPage() {
   const data = useLoaderData();
+  // console.log(data);
+  
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
