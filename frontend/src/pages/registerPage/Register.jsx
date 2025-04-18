@@ -50,7 +50,7 @@ function Register() {
     try {
       await apiRequest.post("/auth/register", { username, email, password });
       toast.success("Registration successful! Redirecting to login...");
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       const message = err.response?.data?.message || "Registration failed.";
       setError(message);
