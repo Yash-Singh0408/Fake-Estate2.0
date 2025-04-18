@@ -143,7 +143,7 @@ export const profilePosts = async (req, res) => {
     res.status(200).json({ userPosts, savedPost });
     
   } catch (error) {
-    console.log(err);
+    console.log(error);
     res.status(500).json({ message: "Failed to fetch profile post!" });
   }
 };

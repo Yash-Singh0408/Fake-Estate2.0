@@ -11,7 +11,22 @@ import messageRoute from "./routes/message.route.js";
 
 // App initialization
 const app = express();
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://fake-estate2-0-front-end-k3yf.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
