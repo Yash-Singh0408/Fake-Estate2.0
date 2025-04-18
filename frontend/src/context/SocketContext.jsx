@@ -11,7 +11,7 @@ export const SocketContextProvider = ({ children }) => {
   useEffect(() => {
     const newSocket = io(
       import.meta.env.PROD
-        ? "https://your-production-server"
+        ? "https://fakeestate2-0-socketserver.onrender.com"
         : "http://localhost:4000"
     );
     setSocket(newSocket);
