@@ -7,10 +7,6 @@ export const useNotificationStore = create((set) => ({
     const res = await apiRequest("/users/notification");
     set({ number: res.data });
   },
-  decrease: () => {
-    set((prev) => ({ number: prev.number - 1 }));
-  },
-  reset: () => {
-    set({ number: 0 });
-  },
+  decrease: () => set((state) => ({ number: state.number - 1 })),
+  reset: () => set({ number: 0 }),
 }));

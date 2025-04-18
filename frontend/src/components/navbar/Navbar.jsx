@@ -1,14 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import "./navbar.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useNotificationStore } from "../../lib/notificationStore";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { Link as ScrollLink, scroller } from "react-scroll";
-import { useEffect } from "react";
+import { SocketContext } from "../../context/SocketContext";
 
 function Navbar() {
   const location = useLocation();
+  const [open, setOpen] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
+  const fetch = useNotificationStore((state) => state.fetch);
+  const number = useNotificationStore((state) => state.number);
+
+  // Scroll to about section on home redirect with hash
   useEffect(() => {
     if (location.hash === "#aboutSection") {
       scroller.scrollTo("aboutSection", {
@@ -19,12 +26,27 @@ function Navbar() {
     }
   }, [location]);
 
-  const [open, setOpen] = useState(false);
-  const { currentUser } = useContext(AuthContext);
-  const fetch = useNotificationStore((state) => state.fetch);
-  const number = useNotificationStore((state) => state.number);
+  // Initial fetch of notification count
+  useEffect(() => {
+    if (currentUser) {
+      fetch();
+    }
+  }, [currentUser, fetch]);
 
-  if (currentUser) fetch();
+  // Listen for real-time notifications
+  useEffect(() => {
+    if (socket && currentUser) {
+      const handleNewNotification = () => {
+        fetch();
+      };
+
+      socket.on("newNotification", handleNewNotification);
+
+      return () => {
+        socket.off("newNotification", handleNewNotification);
+      };
+    }
+  }, [socket, currentUser, fetch]);
 
   return (
     <nav>
@@ -49,7 +71,6 @@ function Navbar() {
             About
           </RouterLink>
         )}
-
         <Link to="/contact">Contact</Link>
         <Link to="/agents">Agents</Link>
       </div>
@@ -80,20 +101,20 @@ function Navbar() {
         <div className={open ? "menu active" : "menu"}>
           <Link to="/">Home</Link>
           {location.pathname === "/" ? (
-          <ScrollLink
-            to="aboutSection"
-            smooth={true}
-            duration={500}
-            offset={-70}
-            className="link"
-          >
-            About
-          </ScrollLink>
-        ) : (
-          <RouterLink to={{ pathname: "/", hash: "#aboutSection" }}>
-            About
-          </RouterLink>
-        )}
+            <ScrollLink
+              to="aboutSection"
+              smooth={true}
+              duration={500}
+              offset={-70}
+              className="link"
+            >
+              About
+            </ScrollLink>
+          ) : (
+            <RouterLink to={{ pathname: "/", hash: "#aboutSection" }}>
+              About
+            </RouterLink>
+          )}
           <Link to="/contact">Contact</Link>
           <Link to="/agents">Agents</Link>
           {currentUser ? (

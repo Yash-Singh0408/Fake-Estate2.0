@@ -12,8 +12,8 @@ const io = new Server({
 let onlineUser = [];
 
 const addUser = (userId, socketId) => {
-  const userExits = onlineUser.find((user) => user.userId === userId);
-  if (!userExits) {
+  const userExists = onlineUser.find((user) => user.userId === userId);
+  if (!userExists) {
     onlineUser.push({ userId, socketId });
   }
 };
@@ -27,83 +27,42 @@ const getUser = (userId) => {
 };
 
 io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
   socket.on("newUser", (userId) => {
     addUser(userId, socket.id);
-    console.log(onlineUser);
+    console.log("Online users:", onlineUser);
   });
 
   socket.on("sendMessage", ({ receiverId, data }) => {
-    // console.log(receiverId, data);
     const receiver = getUser(receiverId);
-    if (receiver && receiver.socketId) {
+    if (receiver?.socketId) {
       io.to(receiver.socketId).emit("getMessage", data);
+      io.to(receiver.socketId).emit("newNotification"); 
     } else {
       console.error(`Receiver not found for ID: ${receiverId}`);
     }
   });
 
+  socket.on("typing", ({ chatId, to }) => {
+    const receiver = getUser(to);
+    if (receiver?.socketId) {
+      io.to(receiver.socketId).emit("typing", { chatId });
+    }
+  });
+
+  socket.on("stopTyping", ({ chatId, to }) => {
+    const receiver = getUser(to);
+    if (receiver) {
+      io.to(receiver.socketId).emit("stopTyping", { chatId });
+    }
+  });
+  
+
   socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
     removeUser(socket.id);
   });
 });
 
-io.listen("4000");
-
-// import { Server } from "socket.io";
-
-// const io = new Server({
-//   cors: {
-//     origin: "http://localhost:5173",
-//   },
-// });
-
-// let onlineUser = [];
-
-// const addUser = (userId, socketId) => {
-//   const userIndex = onlineUser.findIndex((user) => user.userId === userId);
-
-//   if (userIndex !== -1) {
-//     // Update socketId if user already exists
-//     onlineUser[userIndex].socketId = socketId;
-//   } else {
-//     // Add new user
-//     onlineUser.push({ userId, socketId });
-//   }
-
-//   console.log("Online Users:", onlineUser);
-// };
-
-// const removeUser = (socketId) => {
-//   onlineUser = onlineUser.filter((user) => user.socketId !== socketId);
-//   console.log("User disconnected. Online Users:", onlineUser);
-// };
-
-// const getUser = (userId) => {
-//   return onlineUser.find((user) => user.userId === userId);
-// };
-
-// io.on("connection", (socket) => {
-//   console.log(`User connected: ${socket.id}`);
-
-//   socket.on("newUser", (userId) => {
-//     addUser(userId, socket.id);
-//     console.log(`User added: ${userId}, Socket ID: ${socket.id}`);
-//   });
-
-//   socket.on("sendMessage", ({ receiverId, data }) => {
-//     const receiver = getUser(receiverId);
-
-//     if (receiver && receiver.socketId) {
-//       io.to(receiver.socketId).emit("getMessage", data);
-//     } else {
-//       console.error(`Receiver not found for ID: ${receiverId}`);
-//     }
-//   });
-
-//   socket.on("disconnect", () => {
-//     console.log(`User disconnected: ${socket.id}`);
-//     removeUser(socket.id);
-//   });
-// });
-
-// io.listen(4000);
+io.listen(4000);

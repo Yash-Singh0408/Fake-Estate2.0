@@ -1,4 +1,4 @@
-import { Suspense, useContext } from "react";
+import { Suspense, useContext, useState } from "react";
 import "./profile.scss";
 import List from "../../components/list/List";
 import Chat from "../../components/chat/Chat";
@@ -9,13 +9,16 @@ import MessageSkeleton from "../../components/skeleton/MessageSkeleton";
 import SkeletonCard from "../../components/skeleton/SkeletonCard";
 import { toast } from "react-toastify";
 import { FaRegFolderOpen, FaRegBookmark, FaRegComments } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
 function Profile() {
   const data = useLoaderData();
+  const [chats, setChats] = useState([]);
 
   // console.log(data);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser, updateUser } = useContext(AuthContext);
   const hadleLogout = async () => {
     try {
@@ -108,24 +111,30 @@ function Profile() {
       <div className="chatContainer">
         <div className="wrapper">
           <div className="section">
-            <div className="title">
-              <h1>Messages</h1>
-            </div>
+            <div className="title"></div>
             <Suspense fallback={<MessageSkeleton />}>
               <Await
                 resolve={data.chatResponse}
                 errorElement={<p>Error loading chats!</p>}
               >
-                {(chatResponse) =>
-                  chatResponse.data.length > 0 ? (
-                    <Chat chats={chatResponse.data} />
+                {(chatResponse) => {
+                  if (chats.length === 0) setChats(chatResponse.data);
+
+                  return chats.length > 0 ? (
+                    <Chat
+                      chats={chats}
+                      setChats={setChats}
+                      openChatId={location.state?.openChatId}
+                      receiver={location.state?.receiver}
+                      defaultMessage={location.state?.defaultMessage}
+                    />
                   ) : (
                     <div className="emptyState">
                       <FaRegComments size={60} color="#ccc" />
                       <p>No chats yet. Start a conversation!</p>
                     </div>
-                  )
-                }
+                  );
+                }}
               </Await>
             </Suspense>
           </div>

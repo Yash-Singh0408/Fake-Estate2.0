@@ -5,18 +5,26 @@ import apiRequest from "../../lib/apiRequest";
 import { format } from "timeago.js";
 import { SocketContext } from "../../context/SocketContext";
 import { useNotificationStore } from "../../lib/notificationStore";
+import { debounce } from "lodash";
 
-function Chat({ chats }) {
+function Chat({ chats, setChats,  openChatId, receiver, defaultMessage }) {
   const [chat, setChat] = useState(null);
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [partnerTyping, setPartnerTyping] = useState(false);
   const { currentUser } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
-
   const messageEndRef = useRef();
-
   const decrease = useNotificationStore((state) => state.decrease);
 
+  // Emit newUser on mount
+  useEffect(() => {
+    if (socket && currentUser) {
+      socket.emit("newUser", currentUser.id);
+    }
+  }, [socket, currentUser]);
+
+  // Scroll to bottom when chat or typing changes
   useEffect(() => {
     const scrollToBottom = () => {
       setTimeout(() => {
@@ -24,16 +32,36 @@ function Chat({ chats }) {
       }, 100);
     };
     scrollToBottom();
-  }, [chat]);
+  }, [chat, partnerTyping]);
+
+  // Load selected chat
+  useEffect(() => {
+    if (openChatId && receiver) {
+      handleOpenChat(openChatId, receiver);
+    }
+  }, [openChatId, receiver]);
 
   const handleOpenChat = async (id, receiver) => {
     try {
       setLoading(true);
       const res = await apiRequest("/chats/" + id);
+
       if (!res.data.seenBy.includes(currentUser.id)) {
         decrease();
+        await apiRequest.put("/chats/read/" + id);
+
+        const updatedChats = chats.map((c) =>
+          c.id === id ? { ...c, seenBy: [...c.seenBy, currentUser.id] } : c
+        );
+        setChats(updatedChats);
+        setChat({ ...res.data, receiver });
+      } else {
+        setChat({ ...res.data, receiver });
       }
-      setChat({ ...res.data, receiver });
+
+      if (defaultMessage && res.data.messages.length === 0) {
+        setText(defaultMessage);
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -49,15 +77,54 @@ function Chat({ chats }) {
       const res = await apiRequest.post("/messages/" + chat.id, { text });
       setChat((prev) => ({ ...prev, messages: [...prev.messages, res.data] }));
       setText("");
+
       socket.emit("sendMessage", {
         receiverId: chat.receiver.id,
         data: res.data,
+      });
+
+      // Stop typing on send
+      socket.emit("stopTyping", {
+        chatId: chat.id,
+        to: chat.receiver.id,
       });
     } catch (err) {
       console.log(err);
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
+  // Emit typing (debounced)
+  const emitTyping = debounce(() => {
+    if (chat && socket) {
+      socket.emit("typing", {
+        chatId: chat.id,
+        to: chat.receiver.id,
+      });
+    }
+  }, 300);
+
+  // Emit stopTyping if no keypress for a while
+  useEffect(() => {
+    if (!chat || !socket || !text) return;
+
+    const timeout = setTimeout(() => {
+      socket.emit("stopTyping", {
+        chatId: chat.id,
+        to: chat.receiver.id,
+      });
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [text]);
+
+  // Handle incoming messages and typing
   useEffect(() => {
     const read = async () => {
       try {
@@ -70,13 +137,31 @@ function Chat({ chats }) {
     if (chat && socket) {
       socket.on("getMessage", (data) => {
         if (chat.id === data.chatId) {
-          setChat((prev) => ({ ...prev, messages: [...prev.messages, data] }));
+          setChat((prev) => ({
+            ...prev,
+            messages: [...prev.messages, data],
+          }));
           read();
         }
       });
+
+      socket.on("typing", (data) => {
+        if (data.chatId === chat.id) {
+          setPartnerTyping(true);
+        }
+      });
+
+      socket.on("stopTyping", (data) => {
+        if (data.chatId === chat.id) {
+          setPartnerTyping(false);
+        }
+      });
     }
+
     return () => {
       socket.off("getMessage");
+      socket.off("typing");
+      socket.off("stopTyping");
     };
   }, [socket, chat]);
 
@@ -134,18 +219,33 @@ function Chat({ chats }) {
                   key={message.id}
                 >
                   <p>{message.text}</p>
-                  <span>{format(message.createdAt)}</span>
+                  <span title={new Date(message.createdAt).toLocaleString()}>
+                    {format(message.createdAt)}
+                  </span>
                 </div>
               ))}
+              {partnerTyping && (
+                <div className="chatMessage typing">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              )}
               <div ref={messageEndRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="bottom">
               <textarea
+                onKeyDown={handleKeyDown}
                 name="text"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  emitTyping();
+                }}
                 placeholder="Type your message..."
-              ></textarea>
+              />
               <button disabled={!text.trim()}>Send</button>
             </form>
           </div>

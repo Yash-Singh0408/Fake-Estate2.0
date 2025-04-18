@@ -9,13 +9,20 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    setSocket(io( import.meta.env.PROD
-      ? "https://fakeestate2-0-socketserver.onrender.com"
-      : "http://localhost:4000"));
+    const newSocket = io(
+      import.meta.env.PROD
+        ? "https://your-production-server"
+        : "http://localhost:4000"
+    );
+    setSocket(newSocket);
+
+    return () => newSocket.disconnect(); // cleanup
   }, []);
 
   useEffect(() => {
-  currentUser && socket?.emit("newUser", currentUser.id);
+    if (currentUser && socket) {
+      socket.emit("newUser", currentUser.id);
+    }
   }, [currentUser, socket]);
 
   return (

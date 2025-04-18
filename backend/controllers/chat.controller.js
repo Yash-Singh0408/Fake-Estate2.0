@@ -118,3 +118,48 @@ export const readChat = async (req, res) => {
     res.status(500).json({ message: "Failed to read chats" });
   }
 };
+
+// Access or create a chat between two users
+export const accessChat = async (req, res) => {
+  const tokenUserId = req.userId;
+  const receiverId = req.body.receiverId;
+
+  try {
+    // Check if chat already exists
+    let chat = await prisma.chat.findFirst({
+      where: {
+        userIDs: {
+          hasEvery: [tokenUserId, receiverId],
+        },
+      },
+    });
+
+    if (!chat) {
+      // Create if not found
+      chat = await prisma.chat.create({
+        data: {
+          userIDs: [tokenUserId, receiverId],
+        },
+      });
+    }
+
+    // Attach receiver info
+    const receiver = await prisma.user.findUnique({
+      where: {
+        id: receiverId,
+      },
+      select: {
+        id: true,
+        avatar: true,
+        username: true,
+      },
+    });
+
+    chat.receiver = receiver;
+
+    res.status(200).json(chat);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Failed to access chat" });
+  }
+};
