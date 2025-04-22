@@ -1,0 +1,107 @@
+@import "../../responsive.scss";
+
+.sideNavbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 230px;
+  height: 100vh;
+  background-color: #111; // black background
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  z-index: 1000;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+
+    img {
+      width: 28px;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+
+      @include md {
+        display: none;
+      }
+    }
+  }
+
+  .navLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    width: 100%;
+
+    .admin-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid white;
+    }
+
+    .navItem {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #2c2c2c;
+      }
+    }
+
+    .navItem.active {
+      background-color: #fdd835; // yellowish highlight
+      color: #111; // black text for contrast
+
+      svg {
+        color: #111;
+      }
+
+      span {
+        font-weight: 600;
+      }
+    }
+
+    .logout {
+      color: #f44336;
+
+      &:hover {
+        background-color: rgba(244, 67, 54, 0.1);
+      }
+    }
+  }
+
+  .avatarWrapper {
+    margin-top: auto;
+    padding: 20px 0;
+  }
+
+  @include sm {
+    width: 100px;
+
+    .logo span,
+    .navItem span {
+      display: none;
+    }
+
+    .navItem {
+      justify-content: center;
+    }
+  }
+}

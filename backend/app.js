@@ -8,6 +8,7 @@ import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import chatRoute from "./routes/chat.route.js";
 import messageRoute from "./routes/message.route.js";
+import adminRoute from "./routes/admin.route.js";
 
 // App initialization
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
+app.use("/api/admin", adminRoute);
 
 // Listening to port
 const port = process.env.PORT || 8000;

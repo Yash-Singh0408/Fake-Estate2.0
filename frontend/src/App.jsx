@@ -1,7 +1,7 @@
 import Homepage from "./pages/homePage/Homepage.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ListPage from "./pages/listPage/ListPage.jsx";
-import { Layout, RequireAuth } from "./pages/layout/Layout.jsx";
+import { AdminLayout, Layout, RequireAuth } from "./pages/layout/Layout.jsx";
 import SinglePage from "./pages/singlePage/SinglePage.jsx";
 import Profile from "./pages/profilePage/Profile.jsx";
 import Register from "./pages/registerPage/Register.jsx";
@@ -9,6 +9,7 @@ import Login from "./pages/loginPage/Login.jsx";
 import ProfileUpdatePage from "./pages/profileUpdatePage/ProfileUpdatePage.jsx";
 import NewPostPage from "./pages/newPostPage/NewPost.jsx";
 import {
+  editPostLoader,
   listPageLoader,
   profilePageLoader,
   singlePageLoader,
@@ -24,6 +25,10 @@ import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import AdminPage from "./pages/adminPage/AdminPage.jsx";
+import UserPage from "./pages/userPage/UserPage.jsx";
+import AdminlistPage from "./pages/adminListPage/AdminlistPage.jsx";
+import EditPost from "./pages/editPostPage/EditPost.jsx";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -32,7 +37,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
 });
-
 
 function App() {
   const router = createBrowserRouter([
@@ -102,6 +106,33 @@ function App() {
           path: "/profile/addpost",
           element: <NewPostPage />,
         },
+        {
+          path: "/profile/editpost/:id",
+          element: <EditPost />,
+          loader:editPostLoader
+        }
+      ],
+    },
+    {
+      path: "/",
+      element: <AdminLayout />,
+      children: [
+        {
+         path: "/admin",
+         element: <AdminPage /> 
+        },
+        {
+          path:"/admin/updateProfile",
+          element: <ProfileUpdatePage />
+        },
+        {
+          path:"/admin/users",
+          element: <UserPage />
+        },
+        {
+          path:"/admin/properties",
+          element: <AdminlistPage />
+        }
       ],
     },
   ]);

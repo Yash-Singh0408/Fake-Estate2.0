@@ -18,22 +18,28 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
-  
+
     const formData = new FormData(e.target);
     const username = formData.get("username")?.trim();
     const password = formData.get("password")?.trim();
-  
+
     if (!username || !password) {
       toast.error("All fields are required.");
       setLoading(false);
       return;
     }
-  
+
     try {
       const res = await apiRequest.post("/auth/login", { username, password });
       updateUser(res.data);
-      toast.success("Login successful!");
-      navigate("/");
+     
+      if (res.data.isAdmin) {
+        toast.success("Welcome Admin!");
+        navigate("/admin");
+      } else {
+        toast.success("Login successful!");
+        navigate("/");
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed.");
       setError(err.response?.data?.message || "Login failed.");
@@ -41,7 +47,6 @@ function Login() {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="authPage">
@@ -69,7 +74,9 @@ function Login() {
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
-            <button disabled={loading}>{loading ? "Logging in..." : "Login"}</button>
+            <button disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
             {/* {error && <span>{error}</span>} */}
             <Link to="/register">Dont have an account?</Link>
           </form>

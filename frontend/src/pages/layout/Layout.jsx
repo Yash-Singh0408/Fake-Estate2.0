@@ -1,14 +1,18 @@
 import { useContext } from "react";
-import Footer from "../../components/footer/Footer";
-import Navbar from "../../components/navbar/Navbar";
-import "./layout.scss";
 import { Navigate, Outlet } from "react-router-dom";
+import Navbar from "../../components/navbar/Navbar";
 import { AuthContext } from "../../context/AuthContext";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { toast } from "react-toastify"; 
+import "./layout.scss";
+import AdminNavbar from "../../components/adminNavbar/AdminNavbar";
 
+// Regular public layout
 function Layout() {
+
+  const { currentUser } = useContext(AuthContext);
+  if (currentUser && currentUser.isAdmin) {
+    return <Navigate to="/admin" />;
+  }
+
   return (
     <div className="layout">
       <div className="nav">
@@ -17,21 +21,16 @@ function Layout() {
       <div className="content">
         <Outlet />
       </div>
-      {/* <div className="footer"> */}
-      {/* <Footer /> */}
-      {/* </div> */}
     </div>
   );
 }
 
+// Authenticated user layout
 function RequireAuth() {
   const { currentUser } = useContext(AuthContext);
 
-  
-  // if (!currentUser) {
-  //   toast.warning("You need to log in to access this page! ⚠️");
-  //   return <Navigate to="/login" />;
-  // }
+  if (!currentUser) return <Navigate to="/login" />;
+  if (currentUser.isAdmin) return <Navigate to="/admin" />;
 
   return !currentUser ? (
     <Navigate to="/login" />
@@ -43,11 +42,29 @@ function RequireAuth() {
       <div className="content">
         <Outlet />
       </div>
-      {/* <div className="footer"> */}
-      {/* <Footer /> */}
-      {/* </div> */}
     </div>
   );
 }
 
-export { Layout, RequireAuth };
+// Admin-only layout
+function AdminLayout() {
+  const { currentUser } = useContext(AuthContext);
+
+  if (!currentUser) return <Navigate to="/login" />;
+  if (!currentUser.isAdmin) return <Navigate to="/" />;
+
+  return (
+    <div className="admin-layout">
+      <div className="admin-nav">
+        <AdminNavbar />
+      </div>
+      <div className="admin-main">
+        <div className="admin-content">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { Layout, RequireAuth, AdminLayout };

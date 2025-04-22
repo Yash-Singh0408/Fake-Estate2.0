@@ -64,6 +64,7 @@ function ProfileUpdatePage() {
                 name="username"
                 type="text"
                 defaultValue={currentUser.username}
+                disabled={currentUser.isAdmin}
               />
             </div>
             <div className="formGroup">
@@ -73,6 +74,7 @@ function ProfileUpdatePage() {
                 name="email"
                 type="email"
                 defaultValue={currentUser.email}
+                disabled={currentUser.isAdmin}
               />
             </div>
             <div className="formGroup">

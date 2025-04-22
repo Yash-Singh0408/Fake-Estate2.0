@@ -67,7 +67,7 @@ function Profile() {
             >
               {(postResponse) =>
                 postResponse.data.userPosts.length > 0 ? (
-                  <List posts={postResponse.data.userPosts} />
+                  <List posts={postResponse.data.userPosts} showStatus showActions  />
                 ) : (
                   <div className="emptyState">
                     <FaRegFolderOpen

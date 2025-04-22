@@ -3,7 +3,6 @@ import {
   deleteUser,
   getNotificationNumber,
 //   getUser,
-  getUsers,
   profilePosts,
   savePost,
   updateUser,
@@ -12,7 +11,6 @@ import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/getAllUsers", getUsers);
 // router.get("/getUser/:id", verifyToken, getUser);
 router.put("/updateUser/:id", verifyToken, updateUser);
 router.delete("/deleteUser/:id", verifyToken, deleteUser);

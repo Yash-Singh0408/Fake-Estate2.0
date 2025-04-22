@@ -15,7 +15,6 @@ function Navbar() {
   const fetch = useNotificationStore((state) => state.fetch);
   const number = useNotificationStore((state) => state.number);
 
-  // Scroll to about section on home redirect with hash
   useEffect(() => {
     if (location.hash === "#aboutSection") {
       scroller.scrollTo("aboutSection", {
@@ -26,14 +25,12 @@ function Navbar() {
     }
   }, [location]);
 
-  // Initial fetch of notification count
   useEffect(() => {
     if (currentUser) {
       fetch();
     }
   }, [currentUser, fetch]);
 
-  // Listen for real-time notifications
   useEffect(() => {
     if (socket && currentUser) {
       const handleNewNotification = () => {
@@ -80,10 +77,17 @@ function Navbar() {
           <div className="user">
             <img src={currentUser.avatar || "/noavatar.jpg"} alt="User" />
             <span>{currentUser.username}</span>
-            <Link to="/profile" className="profile">
-              {number > 0 && <div className="notification">{number}</div>}
-              <span>Profile</span>
-            </Link>
+            {!currentUser.isAdmin && (
+              <Link to="/profile" className="profile">
+                {number > 0 && <div className="notification">{number}</div>}
+                <span>Profile</span>
+              </Link>
+            )}
+            {currentUser.isAdmin && (
+              <Link to="/admin" className="adminLink">
+                AdminPanel
+              </Link>
+            )}
           </div>
         ) : (
           <>
@@ -118,7 +122,10 @@ function Navbar() {
           <Link to="/contact">Contact</Link>
           <Link to="/agents">Agents</Link>
           {currentUser ? (
-            <Link to="/profile">Profile</Link>
+            <>
+              {!currentUser.isAdmin && <Link to="/profile">Profile</Link>}
+              {currentUser.isAdmin && <Link to="/admin">Admin</Link>}
+            </>
           ) : (
             <>
               <Link to="/login">Sign in</Link>

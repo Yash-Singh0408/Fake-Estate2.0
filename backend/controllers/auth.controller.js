@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prisma from "../lib/prisma.js";
 
-
 // Register a new User
 export const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -11,10 +10,7 @@ export const register = async (req, res) => {
     // Check if user already exists (by email or username)
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { email: email },
-          { username: username }
-        ],
+        OR: [{ email }, { username }],
       },
     });
 
@@ -24,14 +20,17 @@ export const register = async (req, res) => {
 
     // HASH the password
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
 
-    // Create a user and save it in the DB
+    // Assign admin if it's the special account
+    const isAdmin = username === "Yash0408" && email === "Yash@123gmail.com";
+
+    // Create and save user in DB
     const newUser = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
+        isAdmin,
       },
     });
 
@@ -45,54 +44,50 @@ export const register = async (req, res) => {
   }
 };
 
-
-// Login a Existing User
 export const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // ✅ Check if username and password are provided
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({ message: "Username and password are required" });
+      return res.status(400).json({ message: "Username and password are required" });
     }
 
-    // Check if user exists
     const user = await prisma.user.findUnique({ where: { username } });
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    // Check if password is correct
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) return res.status(401).json({ message: "Invalid credentials" });
 
-    // Generate a token and send it back to the user
+    // ✅ Check if user is admin
+    const isAdmin = user.isAdmin;
+
     const age = 1000 * 60 * 60 * 24 * 7;
     const token = jwt.sign(
       {
         id: user.id,
-        isAdmin:false
+        isAdmin,
       },
-      process.env.JWT_SECRET,{expiresIn: age}
+      process.env.JWT_SECRET,
+      { expiresIn: age }
     );
 
-    const {password:userPassword , ...userInfo} = user
+    const { password: userPassword, ...userInfo } = user;
 
     res
       .cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite : "None",
+        sameSite: "None",
         maxAge: age,
       })
       .status(200)
-      .json(userInfo);
-    console.log("Success");
+      .json({ ...userInfo, isAdmin }); // Send admin flag to frontend
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to login. Something went wrong" });
   }
 };
+
 
 // Logout a User
 export const logout = (req, res) => {

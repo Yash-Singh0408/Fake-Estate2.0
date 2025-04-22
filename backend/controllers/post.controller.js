@@ -16,6 +16,7 @@ export const getPosts = async (req, res) => {
           gte: parseInt(query.minPrice) || 0,
           lte: parseInt(query.maxPrice) || 1000000,
         },
+        status: "approved",
       },
     });
 
@@ -81,6 +82,7 @@ export const addPost = async (req, res) => {
       data: {
         ...body.postData,
         userId: tokenUserId,
+        status: "pending",  // Set status to "pending"
         postDetail: {
           create: body.postDetail,
         },
@@ -95,31 +97,104 @@ export const addPost = async (req, res) => {
 
 // Update Post
 export const updatePost = async (req, res) => {
+  const id = req.params.id;
+  const tokenUserId = req.userId;
+  const { postData, postDetail } = req.body;
+
   try {
-    res.status(200).json();
+    // Check if post exists and belongs to the user
+    const existingPost = await prisma.post.findUnique({ where: { id } });
+
+    if (!existingPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    if (existingPost.userId !== tokenUserId) {
+      return res.status(403).json({ message: "Not authorized to update this post" });
+    }
+
+    // Only include valid fields for the post table
+    const {
+      title,
+      price,
+      address,
+      city,
+      bedroom,
+      bathroom,
+      latitude,
+      longitude,
+      type,
+      property,
+      images,
+    } = postData;
+
+    // Update the post and its detail
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: {
+        title,
+        price,
+        address,
+        city,
+        bedroom,
+        bathroom,
+        latitude,
+        longitude,
+        type,
+        property,
+        images,
+        status: "pending", // Reset status for admin re-approval
+        postDetail: {
+          update: {
+            ...postDetail, 
+          },
+        },
+      },
+      include: {
+        postDetail: true,
+      },
+    });
+
+    res.status(200).json(updatedPost);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Failed to update posts" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to update post" });
   }
 };
 
-// Delete Post
+
 export const deletePost = async (req, res) => {
   const id = req.params.id;
   const tokenUserId = req.userId;
 
   try {
-    const post = await prisma.post.findUnique({ where: { id } });
+    const post = await prisma.post.findUnique({
+      where: { id },
+      include: { postDetail: true },
+    });
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
 
     if (post.userId !== tokenUserId) {
       return res.status(403).json({ message: "Not Authorized" });
     }
 
-    await prisma.post.delete({ where: { id } });
+    // First delete postDetail (manual cascade)
+    await prisma.postDetail.delete({
+      where: { postId: id },
+    });
 
-    res.status(200).json({ message: "Post deleted successfully" });
+    // Then delete post
+    await prisma.post.delete({
+      where: { id },
+    });
+
+    res.status(200).json({ message: "Post and its detail deleted successfully" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Failed to delete posts" });
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete post" });
   }
 };
+

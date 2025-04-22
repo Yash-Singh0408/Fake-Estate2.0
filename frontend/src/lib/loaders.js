@@ -28,3 +28,11 @@ export const profilePageLoader = async () => {
      chatResponse: chatPromise
      };
 }
+
+// editPostLoader.js
+export const editPostLoader = async ({ params }) => {
+  const postPromise = apiRequest.get(`/posts/getPost/${params.id}`).then(res => res.data);
+  return {
+    post: postPromise,
+  };
+};
