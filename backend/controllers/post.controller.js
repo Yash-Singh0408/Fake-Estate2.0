@@ -1,31 +1,53 @@
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 
-// Get All Posts
+// Get All Posts controllers/post.js
 export const getPosts = async (req, res) => {
-  const query = req.query;
-
   try {
+    const {
+      city,
+      type,
+      property,
+      bedroom,
+      bathroom,
+      minPrice,
+      maxPrice,
+      minSize,
+      maxSize,
+      status = "approved",
+    } = req.query;
+
     const posts = await prisma.post.findMany({
       where: {
-        city: query.city || undefined,
-        type: query.type || undefined,
-        property: query.property || undefined,
-        bedroom: parseInt(query.bedroom) || undefined,
-        price: {
-          gte: parseInt(query.minPrice) || 0,
-          lte: parseInt(query.maxPrice) || 1000000,
+        city: city || undefined,
+        type: type || undefined,
+        property: property || undefined,
+        bedroom: bedroom ? +bedroom : undefined,
+        bathroom: bathroom ? +bathroom : undefined,
+        postDetail: {
+          // nested range for size (sq ft / m²)
+          size: {
+            gte: minSize ? +minSize : undefined,
+            lte: maxSize ? +maxSize : undefined,
+          },
         },
-        status: "approved",
+        price: {
+          gte: minPrice ? +minPrice : 0,
+          lte: maxPrice ? +maxPrice : 1_000_000_000,
+        },
+        status,
       },
+      orderBy: { createdAt: "desc" },
+      include: { postDetail: true },   // so size renders in UI
     });
 
-    res.status(200).json(posts);
-  } catch (error) {
-    console.log(error);
+    res.json(posts);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to get posts" });
   }
 };
+
 
 // Get Single Post
 export const getPost = async (req, res) => {
@@ -162,7 +184,7 @@ export const updatePost = async (req, res) => {
   }
 };
 
-
+// Delete Post
 export const deletePost = async (req, res) => {
   const id = req.params.id;
   const tokenUserId = req.userId;
@@ -181,12 +203,17 @@ export const deletePost = async (req, res) => {
       return res.status(403).json({ message: "Not Authorized" });
     }
 
-    // First delete postDetail (manual cascade)
-    await prisma.postDetail.delete({
+    // Delete related SavedPosts first
+    await prisma.savedPost.deleteMany({
       where: { postId: id },
     });
 
-    // Then delete post
+    // Delete PostDetail if it exists
+    await prisma.postDetail.deleteMany({
+      where: { postId: id },
+    });
+
+    // Finally, delete the post itself
     await prisma.post.delete({
       where: { id },
     });
@@ -197,4 +224,5 @@ export const deletePost = async (req, res) => {
     res.status(500).json({ message: "Failed to delete post" });
   }
 };
+
 

@@ -68,8 +68,36 @@ function Navbar() {
             About
           </RouterLink>
         )}
-        <Link to="/contact">Contact</Link>
-        <Link to="/agents">Agents</Link>
+        {location.pathname === "/" ? (
+          <ScrollLink
+            to="testimonial"
+            smooth={true}
+            duration={500}
+            offset={-70}
+            className="link"
+          >
+            Testimonials
+          </ScrollLink>
+        ) : (
+          <RouterLink to={{ pathname: "/", hash: "#testimonial" }}>
+            Testimonials
+          </RouterLink>
+        )}
+        {location.pathname === "/" ? (
+          <ScrollLink
+            to="homesearch"
+            smooth={true}
+            duration={500}
+            offset={-70}
+            className="link"
+          >
+            Search
+          </ScrollLink>
+        ) : (
+          <RouterLink to={{ pathname: "/", hash: "#homesearch" }}>
+            Search
+          </RouterLink>
+        )}
       </div>
 
       <div className="right">

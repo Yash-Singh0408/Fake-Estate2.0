@@ -38,7 +38,7 @@ function Footer() {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/list?type=buy">Buy</Link></li>
             <li><Link to="/list?type=rent">Rent</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
+            {/* <li><Link to="/contact">Contact</Link></li> */}
           </ul>
         </div>
 

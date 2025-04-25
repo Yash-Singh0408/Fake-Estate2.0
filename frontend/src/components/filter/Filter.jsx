@@ -3,7 +3,6 @@ import "./filter.scss";
 import { useSearchParams } from "react-router-dom";
 import { FaSearch, FaRedo } from "react-icons/fa";
 
-
 function Filter() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
@@ -14,6 +13,9 @@ function Filter() {
     bedroom: searchParams.get("bedroom") || 0,
     minPrice: searchParams.get("minPrice") || 0,
     maxPrice: searchParams.get("maxPrice") || 10000000,
+    bathroom: searchParams.get("bathroom") || "",
+    minSize: searchParams.get("minSize") || "",
+    maxSize: searchParams.get("maxSize") || "",
   });
 
   const handleChange = (e) => {
@@ -38,6 +40,9 @@ function Filter() {
       bedroom: "",
       minPrice: "",
       maxPrice: "",
+      bathroom: "",
+      minSize: "",
+      maxSize: "",
     };
     setQuery(defaultQuery);
     setSearchParams({});
@@ -48,7 +53,10 @@ function Filter() {
         Search Results for <b>{searchParams.get("city")}</b>
       </h1>
 
-      <button className="toggleBtn" onClick={() => setShowFilters(!showFilters)}>
+      <button
+        className="toggleBtn"
+        onClick={() => setShowFilters(!showFilters)}
+      >
         {showFilters ? "Hide Filters" : "Show Filters"}
       </button>
 
@@ -71,7 +79,12 @@ function Filter() {
       <div className={`bottom ${showFilters ? "show" : ""}`}>
         <div className="item">
           <label htmlFor="type">Type</label>
-          <select name="type" id="type" value={query.type} onChange={handleChange}>
+          <select
+            name="type"
+            id="type"
+            value={query.type}
+            onChange={handleChange}
+          >
             <option value="">Any</option>
             <option value="buy">Buy</option>
             <option value="rent">Rent</option>
@@ -80,12 +93,18 @@ function Filter() {
 
         <div className="item">
           <label htmlFor="property">Property</label>
-          <select name="property" id="property" value={query.property} onChange={handleChange}>
+          <select
+            name="property"
+            id="property"
+            value={query.property}
+            onChange={handleChange}
+          >
             <option value="">Any</option>
             <option value="house">House</option>
             <option value="apartment">Apartment</option>
             <option value="condo">Condo</option>
             <option value="land">Land</option>
+            <option value="townhouse">Townhouse</option>
           </select>
         </div>
 
@@ -125,12 +144,24 @@ function Filter() {
           />
         </div>
 
+        <div className="item">
+        <label htmlFor="bathroom">Bathroom</label>
+        <input
+          type="number"
+          id="bathroom"
+          name="bathroom"
+          value={query.bathroom}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        </div>
+
         <div className="actions">
           <button className="search" onClick={handleFilter}>
-          <FaSearch /> Search
+            <FaSearch /> Search
           </button>
           <button className="reset" onClick={resetFilters}>
-          <FaRedo /> Reset
+            <FaRedo /> Reset
           </button>
         </div>
       </div>

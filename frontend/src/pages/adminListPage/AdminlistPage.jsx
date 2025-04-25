@@ -1,8 +1,10 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./adminlistPage.scss";
 import apiRequest from "../../lib/apiRequest";
-import { Search } from "lucide-react";
+import { Search,BadgeCheck, CheckCircle, XCircle } from "lucide-react";
 import CustomModal from "../../components/customModal/CustomModal";
+
+
 
 function AdminlistPage() {
   const [listings, setListings] = useState([]);
@@ -11,7 +13,7 @@ function AdminlistPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [updating, setUpdating] = useState(null); // stores post ID being updated
+  const [updating, setUpdating] = useState(null);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -63,13 +65,11 @@ function AdminlistPage() {
     <div className="adminlistPage">
       <h2 className="pageTitle">Manage Listings</h2>
 
-      <div className="filterSection">
+     <div className="mainContent">
+     <div className="filterSection">
         <div>
           <label>Sort by:</label>
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
+          <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
             <option value="priceAsc">Price (Low to High)</option>
@@ -79,10 +79,7 @@ function AdminlistPage() {
 
         <div>
           <label>Status:</label>
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
+          <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
             <option value="all">All</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
@@ -131,41 +128,38 @@ function AdminlistPage() {
               <tr key={post.id}>
                 <td className="center">{index + 1}</td>
                 <td>
-                  <button
-                    style={{ textDecoration: "none", color: "inherit" }}
-                    onClick={() => openModal(post)}
-                    className="viewBtn"
-                  >
+                  <button onClick={() => openModal(post)} className="viewBtn">
                     {post.title}
                   </button>
                 </td>
-                <td>{post.city}</td>
+                <td className="format">{post.city}</td>
                 <td>${post.price.toLocaleString()}</td>
-                <td>{post.type}</td>
-                <td>{post.property}</td>
+                <td className="format" >{post.type}</td>
+                <td className="format">{post.property}</td>
                 <td>{new Date(post.createdAt).toLocaleDateString()}</td>
-                <td>{post.user?.username}</td>
-                <td className={`statusCell ${post.status}`} style={{ marginTop: "6px" }} >{post.status}</td>
+                <td className="format">{post.user?.username}</td>
+                <td className={`statusCell ${post.status}`}>{post.status}</td>
                 <td>
                   {post.status === "pending" ? (
                     <div className="actionBtns">
                       <button
                         disabled={updating === post.id}
                         onClick={() => updateStatus(post.id, "approved")}
-                        className="approveBtn"
+                        className="iconBtn approveBtn"
                       >
-                        {updating === post.id ? "Approving..." : "Approve"}
+                        <BadgeCheck size={20} />
+
                       </button>
                       <button
                         disabled={updating === post.id}
                         onClick={() => updateStatus(post.id, "rejected")}
-                        className="rejectBtn"
+                        className="iconBtn rejectBtn"
                       >
-                        {updating === post.id ? "Rejecting..." : "Reject"}
+                        <XCircle size={20} />
                       </button>
                     </div>
                   ) : (
-                    "-"
+                    <div style={{ textAlign: "center" }} >-</div>
                   )}
                 </td>
               </tr>
@@ -173,6 +167,7 @@ function AdminlistPage() {
           </tbody>
         </table>
       )}
+     </div>
 
       <CustomModal isOpen={!!selectedPost} onClose={closeModal} post={selectedPost} />
     </div>

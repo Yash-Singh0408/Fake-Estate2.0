@@ -46,7 +46,10 @@ function Card({ item, showStatus, showActions }) {
             <img src="/pin.png" alt="pin" />
             <span>{item.address}</span>
           </p>
-          <p className="price">₹{item.price}</p>
+          <p className="price">
+  <span>$ {new Intl.NumberFormat('en-IN').format(item.price)}</span>
+</p>
+
 
           <div className="bottom">
             <div className="features">

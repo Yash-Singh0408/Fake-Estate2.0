@@ -47,10 +47,10 @@ function AdminNavbar() {
           <Building2 />
           <span>Properties</span>
         </NavLink>
-        <NavLink to="/admin/requests" className={({ isActive }) => isActive ? "navItem active" : "navItem"}>
+        {/* <NavLink to="/admin/requests" className={({ isActive }) => isActive ? "navItem active" : "navItem"}>
           <FileText />
           <span>Requests</span>
-        </NavLink>
+        </NavLink> */}
         <NavLink to="/admin/updateProfile" className={({ isActive }) => isActive ? "navItem active" : "navItem"}>
           <img src={currentUser?.avatar || "/noavatar.jpg"} alt="Admin Avatar" className="admin-avatar" />
           <span>Profile</span>

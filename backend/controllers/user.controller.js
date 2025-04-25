@@ -128,6 +128,30 @@ export const savePost = async (req, res) => {
   }
 };
 
+// Check if post is saved
+export const isPostSaved = async (req, res) => {
+  const tokenUserId = String(req.userId);
+  const postId = String(req.params.postId);
+
+  try {
+    const savedPost = await prisma.savedPost.findUnique({
+      where: {
+        userId_postId: {
+          userId: tokenUserId,
+          postId: postId,
+        },
+      },
+    });
+
+    res.status(200).json({ isSaved: !!savedPost });
+  } catch (err) {
+    console.error("Error checking saved post:", err);
+    res.status(500).json({ message: "Failed to check saved status." });
+  }
+};
+
+
+
 // Fetch users Posts
 // Fetch users Posts
 export const profilePosts = async (req, res) => {

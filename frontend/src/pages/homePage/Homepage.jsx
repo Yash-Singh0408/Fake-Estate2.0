@@ -153,8 +153,12 @@ function Homepage() {
         <AboutSection />
       </div>
 
+      <div id="testimonial">
       <TestimonialSlider />
+      </div>
+      <div id="homesearch">
       <HomeSearch />
+      </div>
       <Footer />
     </div>
   );

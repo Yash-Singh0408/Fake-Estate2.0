@@ -22,7 +22,7 @@ const testimonials = [
     avatar: "/user3.png",
   },
   {
-    name: "Priya Sharma",
+    name: "Rahul Sharma",
     location: "Pune",
     quote: "Professional and friendly experience.",
     avatar: "/user5.png",

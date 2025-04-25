@@ -29,6 +29,7 @@ import AdminPage from "./pages/adminPage/AdminPage.jsx";
 import UserPage from "./pages/userPage/UserPage.jsx";
 import AdminlistPage from "./pages/adminListPage/AdminlistPage.jsx";
 import EditPost from "./pages/editPostPage/EditPost.jsx";
+import PageNotFound from "./404/PageNotFound.jsx";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -85,7 +86,7 @@ function App() {
         //  404 page
         {
           path: "*",
-          element: <div>404</div>,
+          element: <PageNotFound />,
         },
       ],
     },

@@ -96,7 +96,7 @@ function SinglePage() {
                           <span>{post.address}</span>
                         </motion.div>
                         <motion.div className="price" variants={fadeInUp(0.4)}>
-                          ₹ {post.price}
+                          $ {new Intl.NumberFormat("en-IN").format(post.price)}
                         </motion.div>
                       </div>
                       <motion.div className="user" variants={fadeInUp(0.45)}>
@@ -123,33 +123,35 @@ function SinglePage() {
                   <motion.div className="mapContainer" variants={fadeInUp(0.7)}>
                     <Map items={[post]} singleLocation={true} />
                   </motion.div>
-                  <motion.div className="buttons" variants={fadeInUp(0.75)}>
-                    <motion.button
-                      onClick={handleStartChat}
-                      whileHover={{ scale: 1.03 }}
-                    >
-                      <img src="/chat.png" alt="" />
-                      Send a message
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      onClick={() => handleSave(post.id)}
-                      style={{
-                        backgroundColor: saved ? "#fece51" : "white",
-                        minWidth: "160px",
-                      }}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        "Saving..."
-                      ) : (
-                        <>
-                          <img src="/save.png" alt="save" />
-                          {saved ? "Place Saved" : "Save the Place"}
-                        </>
-                      )}
-                    </motion.button>
-                  </motion.div>
+                  {currentUser?.id !== post.userId && (
+                    <motion.div className="buttons" variants={fadeInUp(0.75)}>
+                      <motion.button
+                        onClick={handleStartChat}
+                        whileHover={{ scale: 1.03 }}
+                      >
+                        <img src="/chat.png" alt="" />
+                        Send a message
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.03 }}
+                        onClick={() => handleSave(post.id)}
+                        style={{
+                          backgroundColor: saved ? "#fece51" : "white",
+                          minWidth: "160px",
+                        }}
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          "Saving..."
+                        ) : (
+                          <>
+                            <img src="/save.png" alt="save" />
+                            {saved ? "Place Saved" : "Save the Place"}
+                          </>
+                        )}
+                      </motion.button>
+                    </motion.div>
+                  )}
 
                   <motion.p className="title" variants={fadeInUp(0.8)}>
                     General
@@ -195,7 +197,7 @@ function SinglePage() {
                   <motion.div className="sizes" variants={fadeInUp(0.95)}>
                     <div className="size">
                       <img src="/size.png" alt="" />
-                      <span>{post.postDetail.size}</span>
+                      <span>{post.postDetail.size} sqft</span>
                     </div>
                     <div className="size">
                       <img src="/bed.png" alt="" />
