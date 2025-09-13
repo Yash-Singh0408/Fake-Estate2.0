@@ -151,8 +151,6 @@ export const isPostSaved = async (req, res) => {
 };
 
 
-
-// Fetch users Posts
 // Fetch users Posts
 export const profilePosts = async (req, res) => {
   const tokenUserId = req.userId;

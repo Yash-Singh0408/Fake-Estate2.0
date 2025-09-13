@@ -2,8 +2,8 @@ import express from "express";
 import {
   deleteUser,
   getNotificationNumber,
+  getUser,
   isPostSaved,
-//   getUser,
   profilePosts,
   savePost,
   updateUser,
@@ -12,7 +12,7 @@ import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-// router.get("/getUser/:id", verifyToken, getUser);
+router.get("/getUser/:id", getUser);
 router.put("/updateUser/:id", verifyToken, updateUser);
 router.delete("/deleteUser/:id", verifyToken, deleteUser);
 router.post("/save", verifyToken, savePost);
