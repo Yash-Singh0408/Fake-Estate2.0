@@ -9,6 +9,7 @@ export const getUser = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return res.status(404).json({ message: "No user found" });
+    console.log('Fetched user:', user); // <-- Add this
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
